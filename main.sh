@@ -13,7 +13,7 @@ if [ -z "$project_name" ]; then
 fi
 
 if [ -d "$project_name" ]; then
-     echo "Error: Directory '$project_name' already exits. Existing."
+     echo "Error: Directory '$project_name' already exists. Exiting."
      # Exit here if directory already exists
      exit 1
 fi
