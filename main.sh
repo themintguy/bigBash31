@@ -2,111 +2,112 @@
 
 source ./helpers.sh
 
-
 set -e
 
-read -p "Enter the name for your Project : " project_name
+NAME="WELCOME TO BIGBASH31"
+
+rows=$(tput lines)
+cols=$(tput cols)
+
+text_length=${#NAME}
+row=$((rows / 2))
+col=$(((cols - text_length) / 2))
+
+tput setaf 2 
+tput cup $row $col
+echo "$NAME"
+
+tput sgr0
+
+
+read -p "Enter the name of the Project : " project_name
 
 if [ -z "$project_name" ]; then
-    echo "Project name can't be empty. Exiting."
-    exit 1
+   echo "Project name can't be empty. Exiting. "
+   exit 1
 fi
 
-if [ -d "$project_name" ]; then
-     echo "Error: Directory '$project_name' already exists. Exiting."
-     # Exit here if directory already exists
-     exit 1
-fi
-# Folder will be created one folder back (go up one level)
 cd ..
-mkdir "$project_name"
+mkdir -p "$project_name"/{frontend,backend}
 cd "$project_name"
+touch README.md .gitignore
 
-mkdir frontend backend 
-touch readme.md .gitignore
+prompt_for_frontend() {
+    echo "$(tput setaf 6)Choose a Frontend tech stack:$(tput sgr0)"
+    echo "$(tput setaf 2)1) React + TypeScript$(tput sgr0)"
+    echo "$(tput setaf 3)2) React + JavaScript$(tput sgr0)"
+    echo "$(tput setaf 4)3) Vue.js$(tput sgr0)"
+    echo "$(tput setaf 5)4) Next.js$(tput sgr0)"
 
-echo "Directory structure for '$project_name' created sucessfully."
-echo "Root : $(pwd)"
-echo " - backend/"
-echo " - frontend/"
-echo "choose frontend tech stacks (Next.js will provided soon)"
-
-cd frontend
-npm create vite@latest ./
-npm i
-npm i tailwindcss @tailwindcss/vite axios react-icons react-router-dom framer-motion clsx
-read -p "Enter any additional NPM packages to install (or leave blank): " extra_packages
-
-if [ -n "$extra_packages" ]; then
-  echo "Installing : $extra_packages"
-  npm i $extra_packages
-else
-  echo "skipping extra packages"
-fi
-
-mkdir styles pages layouts context hooks libs utils components data fonts auth
-echo "Inside of : $(pwd)"
-echo "React  is Installed && dont forget to setup Tailwind in config!!!"
-cd ..
-cd backend 
-
-
-
-prompt_for_stack_choice() {
-    echo "Choose a tech stack:"
-    echo "1) Express + PostgreSQL "
-    echo "2) GIN + PostgreSQL"
-    
     while true; do
-        read -p "Enter your choice (1, 2, or 3): " choice
+        read -p "$(tput setaf 6)Enter your choice (1-4): $(tput sgr0)" choice
         case $choice in
         1)
-          setup_pern
-          return
-          ;;
+            setup_react_ts
+            return
+            ;;
         2)
-          setup_grape
-          return
-          ;;
+            setup_react_js
+            return
+            ;;
+        3)
+            setup_vue_js
+            return
+            ;;
+        4)
+            setup_next_js
+            return
+            ;;
         *)
-          echo "Invalid choice "
+            echo "$(tput setaf 1)Invalid choice. Please enter a number between 1 and 4.$(tput sgr0)"
+            ;;
         esac
     done
 }
 
-prompt_for_stack_choice
-# cd ..
-# cd ..
-# BASE_DIR=$(pwd)  
-# pwd
-# GRAPESRC="$BASE_DIR/GRAPE/main.go"
-# GRAPEDEST="$BASE_DIR/$project_name/backend/main.go"
-# cp "$GRAPESRC" "$GRAPEDEST"
+prompt_for_frontend
+
+prompt_for_backend(){
+   echo "$(tput setaf 6)Choose a Backend Tech Stack : $(tput sgr0)"
+   echo "$(tput setaf 8) 1) Express + MongoDB )"
+   echo "$(tput setaf 5) 2) Fast API + PostgreSQL )"
+   echo "$(tput setaf 9) 3) Express + PostgreSQL )"
+   echo "$(tput setaf 4) 4) Core Go + PostgreSQL )"
+
+
+   while true; do
+       read -p "$(tput setaf 6)Enter your choice (1-4): $(tput sgr0)" choice
+       
+       case $choice in
+       1)
+         setup_mern
+         return
+         ;;
+      2)
+        setup_fast
+        return
+        ;;
+      3)
+        setup_pern
+        return
+        ;;
+      4)
+        setup_corego
+        return
+        ;;
+
+     *)
+        echo "$(tput setaf 1)Invalid choice. Please enter a number between 1 and 3.$(tput sgr0)"
+          ;;
+        esac
+    done
+}
+
+
+prompt_for_backend
 
 
 
 
 
 
-# npm init -y
-# npm i pg express dotenv
-# mkdir src 
-# mkdir config controllers routes models middlewares services utils 
-# touch main.go .env
-# go mod init backend
-# cd ..
-# cd ..
-# pwd
-# BASE_DIR=$(pwd)  
-# GRAPESRC="$BASE_DIR/GRAPE/main.go"
-# GRAPEDEST="$BASE_DIR/$project_name/backend/main.go"
-# cp "$GRAPESRC" "$GRAPEDEST"
-
-# cd ..
-# touch index.js .env .gitignore README.md
-# cd ..
-# BASE_DIR=$(pwd)  
-# PERNSRC="$BASE_DIR/PERN/index.js"
-# PERNDEST="$BASE_DIR/$project_name/backend/src/index.js"
-# cp "$PERNSRC" "$PERNDEST"
-# echo "Its working!!!"

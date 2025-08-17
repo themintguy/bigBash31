@@ -1,71 +1,92 @@
 #!/bin/bash
-
-setup_grape(){
-    echo "setting up GIN + Postgre SQL"
-    go mod init backend
-    go get \
-  github.com/gin-gonic/gin \
-  gorm.io/gorm \
-  github.com/lib/pq \
-  github.com/joho/godotenv \
-  github.com/gin-contrib/cors \
-  github.com/sirupsen/logrus \
-  github.com/dgrijalva/jwt-go
-
-  curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Go.gitignore
+set -e
 
 
-    mkdir -p internal/config/db/migrations server handler service repository model middleware pkg/logger
-    touch .env internal/config/db/postgres.go internal/config/db/migrations/001_init-up.sql server/router.go handler/user_handler.go service/user_service.go repository/user_repository.go model/user.go middleware/auth.go  pkg/logger/logger.go README.md
 
-    cat > .env <<EOL
-# Database config
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=youruser
-DB_PASSWORD=yourpassword
-DB_NAME=yourdb
-
-# Server config
-PORT=8080
-EOL
-
-    echo "Work is done!!!"
-    echo "Happy Coding!!"
+setup_react_ts(){
+    cd frontend
+    npm create vite@latest . -- --template react-ts
+    mkdir styles pages layouts context hooks libs utils components data fonts auth
+    npm install tailwindcss @tailwindcss/vite axios react-icons react-router-dom framer-motion clsx
+    npm i
+    tput setaf 2 
+    echo "✅ React + TypeScript frontend setup complete"
+    tput sgr0
     cd ..
-cd ..
-BASE_DIR=$(pwd)  
-pwd
-GRAPESRC="$BASE_DIR/GRAPE/main.go"
-GRAPEDEST="$BASE_DIR/$project_name/backend/main.go"
-cp "$GRAPESRC" "$GRAPEDEST"
-
 }
 
-setup_pern(){
-    echo "setting up Express + Postgre SQL"
-    npm init -y
-    npm i express pg dotenv cors morgan jsonwebtoken bcrypt nodemon
-    npm i -D nodemon
-     mkdir -p \
-        src \
-        src/config \
-        src/controllers \
-        src/routes \
-        src/models \
-        src/middleware \
-        src/utils
+setup_react_js(){
+    cd frontend
+    npm create vite@latest . -- --template react
+    mkdir styles pages layouts context hooks libs utils components data fonts auth
+    npm install tailwindcss @tailwindcss/vite axios react-icons react-router-dom framer-motion clsx
+    npm i
+    tput setaf 2
+    echo "✅ React + JavaScript frontend setup complete"
+    tput sgr0
+    cd ..
+}
+setup_vue_js(){
+    cd frontend
+    npm create vite@latest . -- --template vue
+    mkdir -p src/{components,pages,layouts,store,composables,styles,assets,utils,plugins,router,fonts,data}
+    npm i tailwindcss @tailwindcss/vite axios vue-router@4 clsx
+    npm i
+    tput setaf 2
+    echo npm "✅ Vue.js frontend setup complete"
+    tput sgr0
+    cd ..
+}
 
-    touch \
-        src/index.js \
-        src/config/db.js \
-        src/controllers/userController.js \
-        src/routes/userRoutes.js \
-        src/models/userModel.js \
-        src/middleware/authMiddleware.js \
-        src/utils/validators.js \
-        .env \
-        .gitignore \
-        README.md
+setup_next_js(){
+    cd frontend
+    npx create-next-app@latest .
+    npm i  axios react-icons framer-motion clsx
+    npm i
+    tput setaf 2
+    echo "✅ Next.js frontend setup complete"
+    tput sgr0
+    cd ..
+}
 
+
+setup_backend() {
+    local choice="$1"
+    cd backend
+
+    case "$choice" in
+        pern)
+            echo "Setting up PERN stack..."
+            npm init -y
+            npm install express pg dotenv
+            mkdir -p src/{config,controllers,routes,models,middleware,utils}
+            touch src/{index.js,config/db.js,routes/users.js}
+            echo "PERN stack backend setup complete."
+            ;;
+        grape)
+            echo "Setting up Gin + PostgreSQL..."
+            go mod init backend
+            go get github.com/gin-gonic/gin gorm.io/gorm github.com/lib/pq
+            mkdir -p internal/{models,services,controllers}
+            touch main.go .env
+            echo "Gin + PostgreSQL backend setup complete."
+            ;;
+        mern)
+            echo "Setting up MERN stack..."
+            npm init -y
+            npm install express mongoose dotenv
+            mkdir -p src/{config,controllers,routes,models,middleware,utils}
+            touch src/{index.js,config/db.js,routes/users.js}
+            echo "MERN stack backend setup complete."
+            ;;
+        core)
+            echo "Setting up Core Go + PostgreSQL..."
+            go mod init backend
+            go get gorm.io/gorm github.com/lib/pq
+            mkdir -p internal/{models,services,controllers}
+            touch main.go .env
+            echo "Core Go + PostgreSQL backend setup complete."
+            ;;
+    esac
+    cd ..
 }

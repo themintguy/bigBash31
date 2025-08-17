@@ -1,29 +1,58 @@
 #!/bin/bash
 
-# Exit the script immediately if a command returns a non-zero status
-set -e
-
-# --- 1. Define Functions ---
-
-# Function to display the menu and get a valid choice
-prompt_for_stack_choice() {
-    echo "Choose a tech stack:"
-    echo "1) PERN (PostgreSQL, Express, React, Node.js)"
-    echo "2) MERN (MongoDB, Express, React, Node.js)"
-    echo "3) MEVN (MongoDB, Express, Vue, Node.js)"
-    
-    while true; do
-        read -p "Enter your choice (1, 2, or 3): " choice
-        case $choice in
-            1|2|3)
-                echo $choice
-                return
-                ;;
-            *)
-                echo "Invalid choice. Please enter 1, 2, or 3."
-                ;;
-        esac
-    done
+# Reset terminal colors and settings on exit
+cleanup() {
+  clear
+  tput sgr0  # reset colors
 }
+trap cleanup EXIT
 
+# Check if dialog is installed
+if ! command -v dialog &>/dev/null; then
+  echo "Please install dialog first. On Debian/Ubuntu: sudo apt install dialog"
+  exit 1
+fi
 
+tput cup 5 10    # Move cursor to row 5, column 10
+echo -e "\e[1;32mHello from Bash!\e[0m" 
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="My Setup Script"
+TITLE="Setup Menu"
+MENU="Choose an option:"
+
+OPTIONS=(
+  1 "Create folders"
+  2 "Install packages"
+  3 "Exit"
+)
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+# The cleanup trap will run here and reset terminal
+
+case $CHOICE in
+  1)
+    echo "Creating folders..."
+    # your folder creation logic here
+    ;;
+  2)
+    echo "Installing packages..."
+    # your package install logic here
+    ;;
+  3)
+    echo "Exiting..."
+    exit 0
+    ;;
+  *)
+    echo "Invalid option."
+    ;;
+esac
